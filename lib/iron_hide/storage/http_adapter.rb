@@ -71,7 +71,7 @@ module IronHide
         resp = @conn.get do |req|
           req.headers['Authorization'] = token
         end
-        MultiJson.parse(resp.body)
+        MultiJson.load(resp.body)
       end
 
     private
