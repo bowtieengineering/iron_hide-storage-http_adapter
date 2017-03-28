@@ -31,7 +31,8 @@ module IronHide
       # @param [Symbol] val
       # @return [Array<Hash>] array of canonical JSON representation of rules
       def storage_find(resource,action)
-        payload = MultiJson.dump({resource: resource, action: action})
+        # payload = MultiJson.dump({resource: resource, action: action})
+        payload = "#{resource}::#{action}"
         response = http_rules(payload)
         if !response.empty?
           # MultiJson.load(response)
@@ -46,7 +47,7 @@ module IronHide
 
       def http_rules(val)
           # "#{server}/#{database}/_design/rules/_view/resource_rules?key=\"#{val}\""
-        client = CallMicroservice.new(url: "/api/v1/rules?key=#{val}", service: server)
+        client = CallMicroservice.new(url: "/api/v1/rules?key=\"#{val}\"", service: server)
 
         client.get
       end
