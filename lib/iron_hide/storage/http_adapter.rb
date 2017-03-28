@@ -47,7 +47,7 @@ module IronHide
 
       def http_rules(val)
           # "#{server}/#{database}/_design/rules/_view/resource_rules?key=\"#{val}\""
-        client = CallMicroservice.new(url: "/api/v1/rules?key=\"#{val}\"", service: server)
+        client = CallMicroservice.new(url: "/api/v1/rules", service: server, key: val)
 
         client.get
       end
@@ -62,10 +62,10 @@ module IronHide
 
     end
     class CallMicroservice
-      def initialize(url:, service:)
+      def initialize(url:, service:, key:)
         @url = url
         @service = service
-        @conn = Faraday.new url: "http://" + @service + @url
+        @conn = Faraday.new url: "http://" + @service + @url + "?key=\"#{val}\""
       end
 
       def get
