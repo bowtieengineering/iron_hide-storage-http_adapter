@@ -32,8 +32,9 @@ module IronHide
       # @return [Array<Hash>] array of canonical JSON representation of rules
       def storage_find(resource,action)
         # payload = MultiJson.dump({resource: resource, action: action})
-        payload = "#{resource}::#{action}"
-        response = http_rules(payload)
+        client = CallMicroservice.new(url: "/api/v1/rules", service: server, resource: resource, action: action)
+
+        response = client.get
         if !response.empty?
           # MultiJson.load(response)
           response.reduce([]) do |rval, row|
@@ -45,12 +46,6 @@ module IronHide
         end
       end
 
-      def http_rules(val)
-          # "#{server}/#{database}/_design/rules/_view/resource_rules?key=\"#{val}\""
-        client = CallMicroservice.new(url: "/api/v1/rules", service: server, key: val)
-
-        client.get
-      end
 
       def server
         IronHide.configuration.http_host
@@ -62,10 +57,10 @@ module IronHide
 
     end
     class CallMicroservice
-      def initialize(url:, service:, key:)
+      def initialize(url:, service:, resource:, action:)
         @url = url
         @service = service
-        @conn = Faraday.new url: "http://" + @service + @url + "?key=\"#{val}\""
+        @conn = Faraday.new url: "http://" + @service + @url + "?resource=\"#{resource}\"&\action=\"#{action}\""
       end
 
       def get
@@ -83,7 +78,7 @@ module IronHide
     end
     class JsonWebToken
       class << self
-        def encode(payload, exp = 24.hours.from_now)
+        def encode(payload, exp = 5.minutes.from_now)
           payload[:exp] = exp.to_i
           JWT.encode payload, ENV['SECRET_KEY_BASE']
         end
