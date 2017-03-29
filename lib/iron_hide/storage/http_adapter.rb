@@ -60,7 +60,7 @@ module IronHide
       def initialize(url:, service:, resource:, action:)
         @url = url
         @service = service
-        @conn = Faraday.new url: "http://" + @service + @url + "?resource=#{resource}&action=#{action}"
+        @conn = Faraday.new url: "http://" + @service + @url + "?resource=#{resource}&auth_action=#{action}"
       end
 
       def get
