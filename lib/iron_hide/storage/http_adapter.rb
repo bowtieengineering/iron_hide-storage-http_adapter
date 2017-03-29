@@ -38,7 +38,7 @@ module IronHide
         if !response.empty?
           # MultiJson.load(response)
           response.reduce([]) do |rval, row|
-            rval << row["data"]
+            rval << row["rules"]
           end
         else
           []
